@@ -255,16 +255,8 @@ int main(int argc, char *argv[])
 
     do_init();
 
-    /* Try to read one value, if that doesn't work, try 10 more times,
-     * then bail out.
+    /* Try 10 times, then bail out.
      */
-    ret = read_am2301(&s, 0);
-    if (ret == 0) {
-	printf("t = %.1f, rh = %.1f\n", s.t, s.rh);
-	/* Drop the first measurement */
-    }
-    delay(2000);
-
     while (i < 10) {
 	ret = read_am2301(&s, 1);
 	if (ret == 0) {
