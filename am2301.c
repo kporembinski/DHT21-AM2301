@@ -26,6 +26,7 @@ Lesser General Public License for more details.
 #include <sys/types.h>
 #include <sys/stat.h>
 
+/* Connect DATA to GPIO24 (pin 18). In wiringPi pin number is 5 */
 static const int _pin_am2301 = 5;
 
 static void do_init(void);
@@ -165,13 +166,7 @@ int main(int argc, char *argv[])
 {
     int i = 0;
     int ret;
-    int add_db = 1;
     sensor_data s;
-    
-    if ((argc < 4) || (strcmp(argv[1], "-u") != 0)) {
-	printf("Usage: %s -u user passwd [reset | nodb]\n", argv[0]);
-	return -1;
-    }
 
     do_init();
 
