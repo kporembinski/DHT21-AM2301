@@ -38,59 +38,7 @@ typedef struct __sensor_data {
 static void quit_handler(int sig)
 {
     signal(sig, SIG_IGN);
-    mysql_close(con);
     exit(0);
-}
-
-static int mysql_stuff_init(int drop)
-{
-    con = mysql_init(NULL);
-
-    if (con == NULL) {
-	fprintf(stderr, "%s\n", mysql_error(con));
-	return -1;
-    }
-
-    if(mysql_real_connect(con, "localhost", user, passwd,
-			  "am2301db", 0, NULL, 0) == NULL)
-    {
-	fprintf(stderr, "%s\n", mysql_error(con));
-	mysql_close(con);
-	return -1;
-    }
-    if (drop != 0) {
-	if (mysql_query(con, "CREATE DATABASE am2301db") != 0) {
-	    fprintf(stderr, "%s\n", mysql_error(con));
-	}
-	if (mysql_query(con, "DROP TABLE IF EXISTS am2301db") != 0) {
-	    fprintf(stderr, "%s\n", mysql_error(con));
-	    mysql_close(con);
-	    return -1;
-	}
-	if (mysql_query(con, "CREATE TABLE am2301db(ts TIMESTAMP, RH INT, Temp INT)") != 0)     {
-	    fprintf(stderr, "%s\n", mysql_error(con));
-	    mysql_close(con);
-	    return -1;
-	}
-    }
-    return 0;
-}
-
-static int mysql_add(sensor_data *s)
-{
-    char query[256];
-    char st[128];
-
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-    strftime(st, 128, "%F %T", &tm);
-    sprintf(query, "INSERT INTO am2301db VALUES(\"%s\", %d, %d)",
-	    st, (int)(s->t * 10.0), (int)(s->rh * 10.0));
-    if (mysql_query(con, query) != 0) {
-	fprintf(stderr, "%s\n", mysql_error(con));
-	return -1;
-    }
-    return 0;
 }
 
 static void do_init(void)
@@ -102,10 +50,6 @@ static void do_init(void)
 
     signal (SIGTERM, quit_handler);
     signal (SIGHUP, quit_handler);
-
-    if (mysql_stuff_init(0) != 0) {
-	exit(1);
-    }
 
     piHiPri(20);
 }
@@ -229,22 +173,6 @@ int main(int argc, char *argv[])
 	return -1;
     }
 
-    strncpy(user, argv[2], sizeof(user));
-    strncpy(passwd, argv[3], sizeof(passwd));
-
-    if (argc == 5) {
-	if (strcmp(argv[4], "reset") == 0) {
-	    mysql_stuff_init(1);
-	    if (con != 0) {
-		mysql_close(con);
-	    }
-	    return 0;
-	}
-	else if (strcmp(argv[4], "nodb") == 0) {
-	    add_db = 0;
-	}
-    }
-
     do_init();
 
     /* Try 10 times, then bail out.
@@ -253,9 +181,6 @@ int main(int argc, char *argv[])
 	ret = read_am2301(&s, 1);
 	if (ret == 0) {
 	    printf("t = %.1f, rh = %.1f\n", s.t, s.rh);
-	    if (add_db != 0) {
-		mysql_add(&s);
-	    }
 	    break;
 	}
 	delay(2000);
