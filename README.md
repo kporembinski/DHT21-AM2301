@@ -1,7 +1,7 @@
-am2301_poll
+DHT21/AM2301
 ======
-This is a demonstrational program using the AM2301 temperature/humidity sensor.
-It uses wiringPI library in polling mode.
+This program using the DHT21/AM2301 temperature/humidity sensor.
+It uses wiringPI library in polling mode to get data from sensor.
 
 License
 -------
