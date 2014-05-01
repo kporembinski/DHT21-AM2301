@@ -9,16 +9,15 @@ OE		= o
 vpath	%.c ../
 vpath	%.h ../
 
-PROG	= am2301_poll
+PROG	= am2301
 DEPS	=
 
-OBJS	= am2301_poll.$(OE)
+OBJS	= am2301.$(OE)
 
 OBJDIR	= obj
 
 _OBJS	= $(patsubst %,$(OBJDIR)/%,$(OBJS))
 LIBS	= -lwiringPi
-LIBS	+= `mysql_config --cflags --libs`
 
 INCLUDE = -I. -I/include -I../
 
