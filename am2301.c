@@ -1,6 +1,7 @@
 /**************************************************************
  Name        : am2301.c
  Version     : 0.1
+ Info        : http://picoboard.pl/raspberry-pi-obsluga-czujnika-temperatury-wilgotnosci-dht21-am2301/
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -175,7 +176,7 @@ int main(int argc, char *argv[])
     while (i < 10) {
 	ret = read_am2301(&s, 1);
 	if (ret == 0) {
-	    printf("t = %.1f, rh = %.1f\n", s.t, s.rh);
+	    printf("t=%.1f\nrh=%.1f\n", s.t, s.rh);
 	    break;
 	}
 	delay(2000);
